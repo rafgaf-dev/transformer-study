@@ -19,8 +19,8 @@ def make_padding_mask(tokens: torch.Tensor, pad_id: int) -> torch.Tensor:
     Returns:
         Bool tensor of shape (batch, 1, 1, seq_len).
     """
-    # TODO: implement
-    raise NotImplementedError
+    filtered = tokens != pad_id
+    return filtered.unsqueeze(1).unsqueeze(2)
 
 
 def make_causal_mask(seq_len: int, device: torch.device | None = None) -> torch.Tensor:
@@ -36,5 +36,9 @@ def make_causal_mask(seq_len: int, device: torch.device | None = None) -> torch.
     Returns:
         Bool tensor of shape (1, 1, seq_len, seq_len).
     """
-    # TODO: implement
-    raise NotImplementedError
+    # seq_len by seq_len represents the query key attention scores
+    # the mask ensures that only current and previous positions can be attended to
+    # this means that the upper right triangle should be false
+    ones = torch.ones((seq_len, seq_len), dtype=torch.bool, device=device)
+    mask = torch.tril(ones)
+    return mask.unsqueeze(0).unsqueeze(0)  # shape (1, 1, seq_len, seq_len)
