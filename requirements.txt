@@ -1,0 +1,18 @@
+# Core
+torch
+numpy
+
+# Exploration & visualisation (attention maps, positional encodings, loss curves)
+matplotlib
+jupyterlab
+ipykernel
+
+# Testing
+pytest
+
+# Progress bars for training loops
+tqdm
+
+# Install this repo's `src/transformer` package in editable mode so
+# `import transformer` works from tests, scripts and notebooks.
+-e .
