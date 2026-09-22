@@ -30,8 +30,32 @@ def scaled_dot_product_attention(
         weights: (..., query_len, key_len) - each row sums to 1. Return these
                  so you can visualise what the model attends to.
     """
-    # TODO: implement
-    raise NotImplementedError
+    # we need to matmul query and key (excluding the last dimension)
+    # then we scale by sqrt(d_k) as according to the paper
+    # then we apply a mask if one exists.
+    # then we get the weights from a softmax
+    # the resulting weight matrix is matmuled with the value matrix
+
+    #create query_len by key_len matrix
+    query_key = query @ key.mT
+
+    #get and apply scale
+    scale = query.size(-1) ** 0.5
+    query_key_scaled = query_key / scale
+
+    #apply mask
+    if mask is not None:
+        masked_query_key_scaled = query_key_scaled.masked_fill(~mask, float('-inf'))
+    else:
+        masked_query_key_scaled = query_key_scaled
+
+    #apply softmax
+    weights = torch.softmax(masked_query_key_scaled, -1)    
+
+    #get outputs by matmul weights and values
+    outputs = weights @ value
+
+    return (outputs, weights)
 
 
 class MultiHeadAttention(nn.Module):
